@@ -1,0 +1,3 @@
+﻿Color	Group	Depth	Description	Level
+Red	Reds	"Deep"	"Very deep red"	100
+Pink	Reds	Surface	A kind of lighter red	50
