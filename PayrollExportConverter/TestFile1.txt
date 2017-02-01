@@ -1,6 +1,6 @@
 ﻿Name,Color,Weight,Length,Units,Break
 Dog,Brown,20.5,26,5,A
-Big Fish,"Silver",3.5,18,200,A
+Big Fish,"Silver",3.5,18,200,
 Small Fish,Black and White,1,1.0,3000,B
 "Cat, small",tan,8.5,14,5,B
 bear,,300.5,50,1,B

@@ -130,15 +130,21 @@ namespace PayrollExportConverter
         {
             DelimitedRow newValues = new DelimitedRow(ColumnIndices);
             string line = mReader.ReadLine();
-            if (line == null)
+            if (string.IsNullOrEmpty(line))
                 return null;
             for (int nextIndex = 0; ;)
             {
-                if (nextIndex >= line.Length)
+                if (nextIndex > line.Length)
                     break;
-                char firstChar = line[nextIndex++];
+                if (nextIndex == line.Length)
+                {
+                    newValues.Add(MakeValue("", forceStrings));
+                    break;
+                }
+                char firstChar = line[nextIndex];
                 if (firstChar == '"' && mAllowQuoted)
                 {
+                    nextIndex++;
                     int secondQuoteIndex = line.IndexOf('"', nextIndex);
                     if (secondQuoteIndex <= 0)
                     {
@@ -150,13 +156,13 @@ namespace PayrollExportConverter
                 }
                 else
                 {
-                    int nextCommaIndex = line.IndexOf(mDelimiter, nextIndex - 1);
+                    int nextCommaIndex = line.IndexOf(mDelimiter, nextIndex);
                     if (nextCommaIndex < 0)
                     {
-                        newValues.Add(MakeValue(line.Substring(nextIndex - 1), forceStrings));
+                        newValues.Add(MakeValue(line.Substring(nextIndex), forceStrings));
                         break;
                     }
-                    newValues.Add(MakeValue(line.Substring(nextIndex - 1, nextCommaIndex - nextIndex + 1), forceStrings));
+                    newValues.Add(MakeValue(line.Substring(nextIndex, nextCommaIndex - nextIndex), forceStrings));
                     nextIndex = nextCommaIndex + 1;
                 }
             }

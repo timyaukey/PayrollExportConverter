@@ -38,7 +38,11 @@ namespace PayrollExportConverter
 
         public decimal GetDecimal(string columnName)
         {
-            return (decimal)this[GetIndex(columnName)];
+            object v = this[GetIndex(columnName)];
+            if (v is int)
+                return (decimal)(int)v;
+            else
+                return (decimal)v;
         }
 
         public int GetInteger(string columnName)
