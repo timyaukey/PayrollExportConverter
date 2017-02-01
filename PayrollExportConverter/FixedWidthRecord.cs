@@ -9,6 +9,7 @@ namespace PayrollExportConverter
     public class FixedWidthRecord
     {
         private readonly char[] mLine;
+        private readonly bool[] mUsed;
         private readonly int mLength;
         private readonly List<Field> mFields;
 
@@ -17,6 +18,7 @@ namespace PayrollExportConverter
             mLine = new char[length];
             for (int i = 0; i < length; i++)
                 mLine[i] = ' ';
+            mUsed = new bool[length];
             mLength = length;
             mFields = new List<Field>();
         }
@@ -38,10 +40,14 @@ namespace PayrollExportConverter
         {
             for (int i = 0; i < length; i++)
             {
+                int offset = position + i - 1;
+                if (mUsed[offset])
+                    throw new Exception(string.Format("Position {0} already used in {1}{2} record", offset + 1, mLine[0], mLine[1]));
                 if (i < formatted.Length)
-                    mLine[position + i - 1] = formatted[i];
+                    mLine[offset] = formatted[i];
                 else
-                    mLine[position + i - 1] = ' ';
+                    mLine[offset] = ' ';
+                mUsed[offset] = true;
             }
             mFields.Add(new Field(position, length, value, formatted, tag));
         }
@@ -75,7 +81,7 @@ namespace PayrollExportConverter
 
             public override string ToString()
             {
-                return string.Format("P={0} L={1} V={2} F={3} T={4}", mPosition, mLength, mValue, mFormatted, mTag);
+                return string.Format("{0}-{1} V={2} F={3} !{4}", mPosition, mPosition + mLength - 1, mValue, mFormatted, mTag);
             }
         }
 

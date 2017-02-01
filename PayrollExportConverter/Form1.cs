@@ -244,7 +244,7 @@ namespace PayrollExportConverter
                 OutputRTRecord(writer, accum);
                 // No "RU" record, because no "RO" records.
                 OutputRVRecord(writer, accum);
-                OutputRFRecord(writer);
+                OutputRFRecord(writer, accum);
                 
             }
             MessageBox.Show("Wrote W2Output.txt to working directory.");
@@ -283,7 +283,7 @@ namespace PayrollExportConverter
             rec.SetString(3, 9, "261667772", "Submitter's EIN");
             rec.SetString(12, 8, "QS4K6SMS", "User ID");
             rec.SetString(29, 1, chkResubmissions.Checked ? "1" : "0", "Resub Indicator");
-            rec.SetString(35, 6, txtResubID.Text, "WFID");
+            rec.SetString(30, 6, txtResubID.Text, "WFID");
             rec.SetString(36, 2, "98", "Software Code");
 
             rec.SetString(38, 57, "Schmidt's Garden Center, Inc.", "Company Name");
@@ -320,7 +320,7 @@ namespace PayrollExportConverter
             FixedWidthRecord rec = new FixedWidthRecord(mRecordLength);
 
             rec.SetString(1, 2, "RE", "Record Identifier");
-            rec.SetString(3, 6, cboTaxYear.SelectedItem as string, "Tax Year");
+            rec.SetString(3, 4, cboTaxYear.SelectedItem as string, "Tax Year");
             rec.SetString(8, 9, "261667772", "Employer EIN");
             rec.SetString(26, 1, "0", "Terminating Business Indicator");
 
@@ -361,7 +361,7 @@ namespace PayrollExportConverter
             //    " Address=" + empRow.GetString("Address1"));
 
             rec.SetString(1, 2, "RW", "Record Identifier");
-            rec.SetString(3, 9, paySummary.GetString("SSN").PadLeft(9, '0'), "SSN");
+            rec.SetString(3, 9, paySummary.GetString("SSN").Replace("-", "").PadLeft(9, '0'), "SSN");
             rec.SetString(12, 15, empRow.GetString("FName"), "First Name");
             rec.SetString(27, 15, empRow.GetString("MInit"), "Middle Initial");
             rec.SetString(42, 20, empRow.GetString("LName"), "Last Name");
@@ -373,7 +373,7 @@ namespace PayrollExportConverter
             string zip = empRow.GetInteger("Zip Code").ToString("00000");
             rec.SetString(134, 5, zip, "Zipcode");
 
-            rec.SetMoney(188, 11, grossPay, ref accum.GrossPay, "Gross Pay");
+            rec.SetMoney(188, 11, grossPay, ref accum.FederalWages, "Federal Taxable Wages");
             rec.SetMoney(199, 11, paySummary.GetDecimal("Federal Tax"), ref accum.FITW, "FITW");
             rec.SetMoney(210, 11, paySummary.GetDecimal("Gross SS Taxable Income"), ref accum.SocialSecurityWages, "Social Security Wages");
             rec.SetMoney(221, 11, paySummary.GetDecimal("Social Security Tax"), ref accum.SocialSecurityTaxes, "Social Security Tax");
@@ -411,7 +411,7 @@ namespace PayrollExportConverter
 
             rec.SetString(1, 2, "RS", "Record Identifier");
             rec.SetString(3, 2, "41", "State Numeric Code");
-            rec.SetString(10, 9, paySummary.GetString("SSN").PadLeft(9, '0'), "SSN");
+            rec.SetString(10, 9, paySummary.GetString("SSN").Replace("-", "").PadLeft(9, '0'), "SSN");
 
             rec.SetString(19, 15, empRow.GetString("FName"), "First Name");
             rec.SetString(34, 15, empRow.GetString("MInit"), "Middle Initial");
@@ -437,7 +437,7 @@ namespace PayrollExportConverter
             rec.SetString(248, 20, "013375439", "Oregon BIN");
             rec.SetString(274, 2, "41", "State Numeric Code");
 
-            rec.SetMoney(276, 11, grossPay, ref accum.GrossPay, "State Taxable Wages");
+            rec.SetMoney(276, 11, grossPay, ref accum.StateWages, "State Taxable Wages");
             rec.SetMoney(287, 11, paySummary.GetDecimal("State Tax"), ref accum.SITW, "SITW");
 
             writer.WriteLine(rec.GetContents());
@@ -450,7 +450,7 @@ namespace PayrollExportConverter
 
             rec.SetString(1, 2, "RT", "Record Identifier");
             rec.SetString(3, 7, accum.EmployeeRecordCount.ToString("0000000"), "RW Record Count");
-            rec.SetMoney(10, 15, accum.GrossPay, ref dummy, "Total Gross Pay");
+            rec.SetMoney(10, 15, accum.FederalWages, ref dummy, "Total Gross Pay");
             rec.SetMoney(25, 15, accum.FITW, ref dummy, "Total FITW");
             rec.SetMoney(40, 15, accum.SocialSecurityWages, ref dummy, "Total SocSec Wages");
             rec.SetMoney(55, 15, accum.SocialSecurityTaxes, ref dummy, "Total SecSec Withholding");
@@ -485,29 +485,31 @@ namespace PayrollExportConverter
 
             rec.SetString(1, 2, "RV", "Record Identifier");
             rec.SetString(3, 7, accum.EmployeeRecordCount.ToString("0000000"), "RS Record Count");
-            rec.SetMoney(10, 15, accum.GrossPay, ref dummy, "Total State Wages");
+            rec.SetMoney(10, 15, accum.StateWages, ref dummy, "Total State Wages");
             rec.SetMoney(25, 15, accum.SITW, ref dummy, "Total SITW");
 
             writer.WriteLine(rec.GetContents());
         }
 
-        private void OutputRFRecord(TextWriter writer)
+        private void OutputRFRecord(TextWriter writer, Accumulators accum)
         {
             FixedWidthRecord rec = new FixedWidthRecord(mRecordLength);
 
             rec.SetString(1, 2, "RF", "Record Identifier");
+            rec.SetString(8, 9, accum.EmployeeRecordCount.ToString("000000000"), "Total RW Recordss");
 
             writer.WriteLine(rec.GetContents());
         }
         private class Accumulators
         {
             public int EmployeeRecordCount;
-            public decimal GrossPay;
+            public decimal FederalWages;
             public decimal FITW;
             public decimal SocialSecurityWages;
             public decimal SocialSecurityTaxes;
             public decimal MedicareWages;
             public decimal MedicareTaxes;
+            public decimal StateWages;
             public decimal SITW;
             public decimal SocialSecurityTips;
         }
