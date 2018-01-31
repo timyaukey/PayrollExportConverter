@@ -396,6 +396,7 @@ namespace PayrollExportConverter
             rec.SetMoney(441, 11, 0M, ref dummy, "ROTH Contributions 401(k)");
             rec.SetMoney(452, 11, 0M, ref dummy, "ROTH Contributions 403(b)");
             rec.SetMoney(463, 11, 0M, ref dummy, "Cost of Employer Health Coverage");
+            rec.SetMoney(474, 11, 0M, ref dummy, "Small Employer Health Reimbursement Arrangement");
             rec.SetString(486, 1, "1", "Statutory Employee");
             rec.SetString(488, 1, "0", "Retirement Plan");
             rec.SetString(489, 1, "0", "Third Party Sick Pay");
@@ -474,6 +475,7 @@ namespace PayrollExportConverter
             rec.SetMoney(355, 15, 0M, ref dummy, "409A Deferrals");
             rec.SetMoney(370, 15, 0M, ref dummy, "Roth 401(k) Contributions");
             rec.SetMoney(385, 15, 0M, ref dummy, "Roth 403(b) Salary Reduction");
+            rec.SetMoney(400, 15, 0M, ref dummy, "Small Employer Health Reimbursement Arrangement");
 
             writer.WriteLine(rec.GetContents());
         }
