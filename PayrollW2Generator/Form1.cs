@@ -212,6 +212,7 @@ namespace PayrollExportConverter
             Accumulators accum = new Accumulators();
             Dictionary<string, DelimitedRow> employees = LoadEmployeeDictionary(txtEmployeeFile.Text);;
             Dictionary<string, DelimitedRow> supplemental = LoadEmployeeDictionary(txtEmployeeSupplemental.Text);
+            int paycheckCount = 0;
             using (TextWriter writer = new StreamWriter("W2Output.txt"))
             {
                 OutputRARecord(writer);
@@ -239,6 +240,7 @@ namespace PayrollExportConverter
                         }
                         OutputRWRecord(writer, paySummary, empRow, accum);
                         OutputRSRecord(writer, paySummary, empRow, supRow, accum);
+                        paycheckCount++;
                     }
                 }
                 OutputRTRecord(writer, accum);
@@ -247,7 +249,7 @@ namespace PayrollExportConverter
                 OutputRFRecord(writer, accum);
                 
             }
-            MessageBox.Show("Wrote W2Output.txt to working directory.");
+            MessageBox.Show("Wrote W2Output.txt to working directory with " + paycheckCount + " paychecks.");
         }
 
         private Dictionary<string, DelimitedRow> LoadEmployeeDictionary(string fileName)
