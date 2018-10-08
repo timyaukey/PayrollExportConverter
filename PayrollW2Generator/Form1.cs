@@ -226,14 +226,12 @@ namespace PayrollExportConverter
                             break;
                         DelimitedRow paySummary = payParser.ReadUntilChange("SSN");
                         string ssn = paySummary.GetString("SSN");
-                        DelimitedRow empRow;
-                        if (!employees.TryGetValue(ssn, out empRow))
+                        if (!employees.TryGetValue(ssn, out DelimitedRow empRow))
                         {
                             MessageBox.Show("Could not find SSN in employee file: " + ssn);
                             return;
                         }
-                        DelimitedRow supRow;
-                        if (!supplemental.TryGetValue(ssn, out supRow))
+                        if (!supplemental.TryGetValue(ssn, out DelimitedRow supRow))
                         {
                             MessageBox.Show("Could not find SSN in supplemental file: " + ssn);
                             return;
@@ -249,7 +247,11 @@ namespace PayrollExportConverter
                 OutputRFRecord(writer, accum);
                 
             }
-            MessageBox.Show("Wrote W2Output.txt to working directory with " + paycheckCount + " paychecks.");
+            MessageBox.Show("Wrote W2Output.txt to working directory with " + paycheckCount +
+                " employees (if number is too large, maybe input file was not sorted by SSN).");
+            MessageBox.Show("Federal wages: " + accum.FederalWages.ToString("F2") + Environment.NewLine +
+                "State wages: " + accum.StateWages.ToString("F2") + Environment.NewLine +
+                "State tax withheld: " + accum.SITW.ToString("F2"));
         }
 
         private Dictionary<string, DelimitedRow> LoadEmployeeDictionary(string fileName)

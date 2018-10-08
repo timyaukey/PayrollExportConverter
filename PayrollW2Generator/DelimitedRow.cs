@@ -19,7 +19,7 @@ namespace PayrollExportConverter
             ColumnIndices = columnIndices;
         }
 
-        private Dictionary<string, int> ColumnIndices;
+        private readonly Dictionary<string, int> ColumnIndices;
 
         public int GetIndex(string columnName)
         {

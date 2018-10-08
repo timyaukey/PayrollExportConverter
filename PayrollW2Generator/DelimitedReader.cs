@@ -16,8 +16,8 @@ namespace PayrollExportConverter
     public class DelimitedReader
     {
         private TextReader mReader;
-        private char mDelimiter;
-        private bool mAllowQuoted;
+        private readonly char mDelimiter;
+        private readonly bool mAllowQuoted;
 
         private DelimitedRow ColumnNames;
         private Dictionary<string, int> ColumnIndices;
@@ -173,11 +173,9 @@ namespace PayrollExportConverter
         {
             if (!forceString)
             {
-                decimal decValue;
-                int intValue;
-                if (int.TryParse(input, out intValue))
+                if (int.TryParse(input, out int intValue))
                     return intValue;
-                if (decimal.TryParse(input, out decValue))
+                if (decimal.TryParse(input, out decimal decValue))
                     return decValue;
             }
             return input;

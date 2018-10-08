@@ -90,9 +90,9 @@
             this.lblPayrollFile.AutoSize = true;
             this.lblPayrollFile.Location = new System.Drawing.Point(13, 211);
             this.lblPayrollFile.Name = "lblPayrollFile";
-            this.lblPayrollFile.Size = new System.Drawing.Size(278, 13);
+            this.lblPayrollFile.Size = new System.Drawing.Size(354, 13);
             this.lblPayrollFile.TabIndex = 5;
-            this.lblPayrollFile.Text = "Payroll File (CSV export from ezPaycheck sorted by SSN):";
+            this.lblPayrollFile.Text = "Payroll File (CSV export from ezPaycheck):  MUST BE SORTED BY SSN!";
             // 
             // txtPayrollFile
             // 
