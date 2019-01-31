@@ -251,7 +251,8 @@ namespace PayrollExportConverter
                 " employees (if number is too large, maybe input file was not sorted by SSN).");
             MessageBox.Show("Federal wages: " + accum.FederalWages.ToString("F2") + Environment.NewLine +
                 "State wages: " + accum.StateWages.ToString("F2") + Environment.NewLine +
-                "State tax withheld: " + accum.SITW.ToString("F2"));
+                "State tax withheld: " + accum.SITW.ToString("F2") + Environment.NewLine +
+                "W-2 count: " + accum.EmployeeRecordCount.ToString());
         }
 
         private Dictionary<string, DelimitedRow> LoadEmployeeDictionary(string fileName)
