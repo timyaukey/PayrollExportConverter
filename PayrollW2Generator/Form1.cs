@@ -20,6 +20,7 @@ namespace PayrollExportConverter
         public Form1()
         {
             InitializeComponent();
+            SetPaths();
         }
 
         private void btnReadTestFiles_Click(object sender, EventArgs e)
@@ -210,8 +211,18 @@ namespace PayrollExportConverter
                 return;
             }
             Accumulators accum = new Accumulators();
-            Dictionary<string, DelimitedRow> employees = LoadEmployeeDictionary(txtEmployeeFile.Text);;
-            Dictionary<string, DelimitedRow> supplemental = LoadEmployeeDictionary(txtEmployeeSupplemental.Text);
+            Dictionary<string, DelimitedRow> employees = LoadEmployeeDictionary(txtEmployeeFile.Text, 
+                empRow => empRow.GetString("SSN"));
+            Dictionary<string, DelimitedRow> supplemental = LoadEmployeeDictionary(txtEmployeeSupplemental.Text, 
+                empRow => empRow.GetString("SSN"));
+            Dictionary<string, DelimitedRow> statewideQ1 = LoadEmployeeDictionary(txtStatewideTransitQ1.Text, 
+                empRow => empRow.GetInteger("SSN").ToString("000-00-0000"));
+            Dictionary<string, DelimitedRow> statewideQ2 = LoadEmployeeDictionary(txtStatewideTransitQ2.Text,
+                empRow => empRow.GetInteger("SSN").ToString("000-00-0000"));
+            Dictionary<string, DelimitedRow> statewideQ3 = LoadEmployeeDictionary(txtStatewideTransitQ3.Text,
+                empRow => empRow.GetInteger("SSN").ToString("000-00-0000"));
+            Dictionary<string, DelimitedRow> statewideQ4 = LoadEmployeeDictionary(txtStatewideTransitQ4.Text,
+                empRow => empRow.GetInteger("SSN").ToString("000-00-0000"));
             int paycheckCount = 0;
             using (TextWriter writer = new StreamWriter("W2Output.txt"))
             {
@@ -237,7 +248,12 @@ namespace PayrollExportConverter
                             return;
                         }
                         OutputRWRecord(writer, paySummary, empRow, accum);
-                        OutputRSRecord(writer, paySummary, empRow, supRow, accum);
+                        decimal statewideTransitTax =
+                            GetStatewideTaxAmount(ssn, statewideQ1) +
+                            GetStatewideTaxAmount(ssn, statewideQ2) +
+                            GetStatewideTaxAmount(ssn, statewideQ3) +
+                            GetStatewideTaxAmount(ssn, statewideQ4);
+                        OutputRSRecord(writer, paySummary, empRow, supRow, statewideTransitTax, accum);
                         paycheckCount++;
                     }
                 }
@@ -249,13 +265,17 @@ namespace PayrollExportConverter
             }
             MessageBox.Show("Wrote W2Output.txt to working directory with " + paycheckCount +
                 " employees (if number is too large, maybe input file was not sorted by SSN).");
-            MessageBox.Show("Federal wages: " + accum.FederalWages.ToString("F2") + Environment.NewLine +
+            MessageBox.Show(
+                "Federal wages: " + accum.FederalWages.ToString("F2") + Environment.NewLine +
+                "FITW: " + accum.FITW.ToString("F2") + Environment.NewLine +
                 "State wages: " + accum.StateWages.ToString("F2") + Environment.NewLine +
-                "State tax withheld: " + accum.SITW.ToString("F2") + Environment.NewLine +
+                "SITW: " + accum.SITW.ToString("F2") + Environment.NewLine +
+                "Transit wages: " + accum.StatewideTransitWages.ToString("F2") + Environment.NewLine +
+                "Transit taxes: " + accum.StatewideTransitTax.ToString("F2") + Environment.NewLine +
                 "W-2 count: " + accum.EmployeeRecordCount.ToString());
         }
 
-        private Dictionary<string, DelimitedRow> LoadEmployeeDictionary(string fileName)
+        private Dictionary<string, DelimitedRow> LoadEmployeeDictionary(string fileName, Func<DelimitedRow, string> getKey)
         {
             Dictionary<string, DelimitedRow> result = new Dictionary<string, DelimitedRow>();
             using (TextReader empText = new StreamReader(fileName))
@@ -268,12 +288,22 @@ namespace PayrollExportConverter
                         break;
                     if (empRow.Count > 0)
                     {
-                        result.Add(empRow.GetString("SSN"), empRow);
+                        result.Add(getKey(empRow), empRow);
                     }
                     empParser.NextLine();
                 }
             }
             return result;
+        }
+
+        private decimal GetStatewideTaxAmount(string ssn, Dictionary<string, DelimitedRow> statewide)
+        {
+            DelimitedRow row;
+            if (statewide.TryGetValue(ssn, out row))
+            {
+                return row.GetDecimal("TaxAmount");
+            }
+            return 0M;
         }
 
         /// <summary>
@@ -409,7 +439,8 @@ namespace PayrollExportConverter
             writer.WriteLine(rec.GetContents());
         }
 
-        private void OutputRSRecord(TextWriter writer, DelimitedRow paySummary, DelimitedRow empRow, DelimitedRow supRow, Accumulators accum)
+        private void OutputRSRecord(TextWriter writer, DelimitedRow paySummary, DelimitedRow empRow, DelimitedRow supRow,
+            decimal statewideTransitTax, Accumulators accum)
         {
             decimal grossPay = paySummary.GetDecimal("Gross Taxable Income");
 
@@ -445,6 +476,8 @@ namespace PayrollExportConverter
 
             rec.SetMoney(276, 11, grossPay, ref accum.StateWages, "State Taxable Wages");
             rec.SetMoney(287, 11, paySummary.GetDecimal("State Tax"), ref accum.SITW, "SITW");
+            rec.SetMoney(348, 11, grossPay, ref accum.StatewideTransitWages, "Statewide Transit Wages");
+            rec.SetMoney(359, 11, statewideTransitTax, ref accum.StatewideTransitTax, "Statewide Transit Tax");
 
             writer.WriteLine(rec.GetContents());
         }
@@ -494,6 +527,8 @@ namespace PayrollExportConverter
             rec.SetString(3, 7, accum.EmployeeRecordCount.ToString("0000000"), "RS Record Count");
             rec.SetMoney(10, 15, accum.StateWages, ref dummy, "Total State Wages");
             rec.SetMoney(25, 15, accum.SITW, ref dummy, "Total SITW");
+            rec.SetMoney(40, 15, accum.StatewideTransitWages, ref dummy, "Total Statewide Transit Wages");
+            rec.SetMoney(55, 15, accum.StatewideTransitTax, ref dummy, "Total Statewide Transit Tax");
 
             writer.WriteLine(rec.GetContents());
         }
@@ -518,7 +553,36 @@ namespace PayrollExportConverter
             public decimal MedicareTaxes;
             public decimal StateWages;
             public decimal SITW;
+            public decimal StatewideTransitWages;
+            public decimal StatewideTransitTax;
             public decimal SocialSecurityTips;
+        }
+
+        private void btnChooseFolder_Click(object sender, EventArgs e)
+        {
+            dlgTaxFilingsFolder.SelectedPath = lblTaxFilingsFolder.Text;
+            if (dlgTaxFilingsFolder.ShowDialog() != DialogResult.OK)
+                return;
+            lblTaxFilingsFolder.Text = dlgTaxFilingsFolder.SelectedPath;
+            SetPaths();
+        }
+
+        private void SetPaths()
+        {
+            if (cboTaxYear.SelectedItem == null)
+                return;
+            txtEmployeeFile.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "W2\\EmployeeExport.csv");
+            txtEmployeeSupplemental.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "W2\\EmployeeSupplemental.csv");
+            txtPayrollFile.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "W2\\PayrollExport.csv");
+            txtStatewideTransitQ1.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "Q1\\StatewideTransit.txt");
+            txtStatewideTransitQ2.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "Q2\\StatewideTransit.txt");
+            txtStatewideTransitQ3.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "Q3\\StatewideTransit.txt");
+            txtStatewideTransitQ4.Text = Path.Combine(Path.Combine(lblTaxFilingsFolder.Text, cboTaxYear.Text), "Q4\\StatewideTransit.txt");
+        }
+
+        private void cboTaxYear_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SetPaths();
         }
     }
 }

@@ -41,6 +41,14 @@
             this.txtResubID = new System.Windows.Forms.TextBox();
             this.lblEmployeeSupplemental = new System.Windows.Forms.Label();
             this.txtEmployeeSupplemental = new System.Windows.Forms.TextBox();
+            this.dlgTaxFilingsFolder = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnChooseFolder = new System.Windows.Forms.Button();
+            this.lblTaxFilingsFolder = new System.Windows.Forms.Label();
+            this.lblStatewideTransitFiles = new System.Windows.Forms.Label();
+            this.txtStatewideTransitQ1 = new System.Windows.Forms.TextBox();
+            this.txtStatewideTransitQ2 = new System.Windows.Forms.TextBox();
+            this.txtStatewideTransitQ3 = new System.Windows.Forms.TextBox();
+            this.txtStatewideTransitQ4 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnReadTestFiles
@@ -56,7 +64,7 @@
             // btnCreateW2
             // 
             this.btnCreateW2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnCreateW2.Location = new System.Drawing.Point(12, 83);
+            this.btnCreateW2.Location = new System.Drawing.Point(12, 95);
             this.btnCreateW2.Name = "btnCreateW2";
             this.btnCreateW2.Size = new System.Drawing.Size(208, 23);
             this.btnCreateW2.TabIndex = 1;
@@ -68,9 +76,9 @@
             // 
             this.txtEmployeeFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEmployeeFile.Location = new System.Drawing.Point(12, 129);
+            this.txtEmployeeFile.Location = new System.Drawing.Point(12, 141);
             this.txtEmployeeFile.Name = "txtEmployeeFile";
-            this.txtEmployeeFile.Size = new System.Drawing.Size(525, 20);
+            this.txtEmployeeFile.Size = new System.Drawing.Size(655, 20);
             this.txtEmployeeFile.TabIndex = 2;
             this.txtEmployeeFile.Text = "EmployeeExport.csv";
             // 
@@ -78,7 +86,7 @@
             // 
             this.lblEmployeeFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEmployeeFile.AutoSize = true;
-            this.lblEmployeeFile.Location = new System.Drawing.Point(13, 113);
+            this.lblEmployeeFile.Location = new System.Drawing.Point(13, 125);
             this.lblEmployeeFile.Name = "lblEmployeeFile";
             this.lblEmployeeFile.Size = new System.Drawing.Size(222, 13);
             this.lblEmployeeFile.TabIndex = 3;
@@ -88,7 +96,7 @@
             // 
             this.lblPayrollFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblPayrollFile.AutoSize = true;
-            this.lblPayrollFile.Location = new System.Drawing.Point(13, 211);
+            this.lblPayrollFile.Location = new System.Drawing.Point(13, 223);
             this.lblPayrollFile.Name = "lblPayrollFile";
             this.lblPayrollFile.Size = new System.Drawing.Size(354, 13);
             this.lblPayrollFile.TabIndex = 5;
@@ -98,9 +106,9 @@
             // 
             this.txtPayrollFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPayrollFile.Location = new System.Drawing.Point(12, 227);
+            this.txtPayrollFile.Location = new System.Drawing.Point(12, 239);
             this.txtPayrollFile.Name = "txtPayrollFile";
-            this.txtPayrollFile.Size = new System.Drawing.Size(525, 20);
+            this.txtPayrollFile.Size = new System.Drawing.Size(655, 20);
             this.txtPayrollFile.TabIndex = 4;
             this.txtPayrollFile.Text = "PayrollExport.csv";
             // 
@@ -108,7 +116,7 @@
             // 
             this.lblTaxYear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblTaxYear.AutoSize = true;
-            this.lblTaxYear.Location = new System.Drawing.Point(13, 255);
+            this.lblTaxYear.Location = new System.Drawing.Point(17, 436);
             this.lblTaxYear.Name = "lblTaxYear";
             this.lblTaxYear.Size = new System.Drawing.Size(53, 13);
             this.lblTaxYear.TabIndex = 6;
@@ -128,16 +136,17 @@
             "2020",
             "2021",
             "2022"});
-            this.cboTaxYear.Location = new System.Drawing.Point(72, 252);
+            this.cboTaxYear.Location = new System.Drawing.Point(76, 433);
             this.cboTaxYear.Name = "cboTaxYear";
             this.cboTaxYear.Size = new System.Drawing.Size(121, 21);
             this.cboTaxYear.TabIndex = 7;
+            this.cboTaxYear.SelectedIndexChanged += new System.EventHandler(this.cboTaxYear_SelectedIndexChanged);
             // 
             // chkResubmissions
             // 
             this.chkResubmissions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkResubmissions.AutoSize = true;
-            this.chkResubmissions.Location = new System.Drawing.Point(234, 254);
+            this.chkResubmissions.Location = new System.Drawing.Point(238, 435);
             this.chkResubmissions.Name = "chkResubmissions";
             this.chkResubmissions.Size = new System.Drawing.Size(91, 17);
             this.chkResubmissions.TabIndex = 8;
@@ -148,7 +157,7 @@
             // 
             this.lblResubID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblResubID.AutoSize = true;
-            this.lblResubID.Location = new System.Drawing.Point(342, 255);
+            this.lblResubID.Location = new System.Drawing.Point(346, 436);
             this.lblResubID.Name = "lblResubID";
             this.lblResubID.Size = new System.Drawing.Size(55, 13);
             this.lblResubID.TabIndex = 9;
@@ -157,7 +166,7 @@
             // txtResubID
             // 
             this.txtResubID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.txtResubID.Location = new System.Drawing.Point(403, 252);
+            this.txtResubID.Location = new System.Drawing.Point(407, 433);
             this.txtResubID.Name = "txtResubID";
             this.txtResubID.Size = new System.Drawing.Size(55, 20);
             this.txtResubID.TabIndex = 10;
@@ -166,7 +175,7 @@
             // 
             this.lblEmployeeSupplemental.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEmployeeSupplemental.AutoSize = true;
-            this.lblEmployeeSupplemental.Location = new System.Drawing.Point(13, 161);
+            this.lblEmployeeSupplemental.Location = new System.Drawing.Point(13, 173);
             this.lblEmployeeSupplemental.Name = "lblEmployeeSupplemental";
             this.lblEmployeeSupplemental.Size = new System.Drawing.Size(270, 13);
             this.lblEmployeeSupplemental.TabIndex = 12;
@@ -176,17 +185,97 @@
             // 
             this.txtEmployeeSupplemental.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEmployeeSupplemental.Location = new System.Drawing.Point(12, 177);
+            this.txtEmployeeSupplemental.Location = new System.Drawing.Point(12, 189);
             this.txtEmployeeSupplemental.Name = "txtEmployeeSupplemental";
-            this.txtEmployeeSupplemental.Size = new System.Drawing.Size(525, 20);
+            this.txtEmployeeSupplemental.Size = new System.Drawing.Size(655, 20);
             this.txtEmployeeSupplemental.TabIndex = 11;
             this.txtEmployeeSupplemental.Text = "EmployeeSupplemental.csv";
+            // 
+            // dlgTaxFilingsFolder
+            // 
+            this.dlgTaxFilingsFolder.ShowNewFolderButton = false;
+            // 
+            // btnChooseFolder
+            // 
+            this.btnChooseFolder.Location = new System.Drawing.Point(12, 54);
+            this.btnChooseFolder.Name = "btnChooseFolder";
+            this.btnChooseFolder.Size = new System.Drawing.Size(208, 23);
+            this.btnChooseFolder.TabIndex = 13;
+            this.btnChooseFolder.Text = "Choose Tax Filings Folder";
+            this.btnChooseFolder.UseVisualStyleBackColor = true;
+            this.btnChooseFolder.Click += new System.EventHandler(this.btnChooseFolder_Click);
+            // 
+            // lblTaxFilingsFolder
+            // 
+            this.lblTaxFilingsFolder.AutoSize = true;
+            this.lblTaxFilingsFolder.Location = new System.Drawing.Point(226, 59);
+            this.lblTaxFilingsFolder.Name = "lblTaxFilingsFolder";
+            this.lblTaxFilingsFolder.Size = new System.Drawing.Size(150, 13);
+            this.lblTaxFilingsFolder.TabIndex = 14;
+            this.lblTaxFilingsFolder.Text = "C:\\Dropbox\\Payroll\\TaxFilings";
+            // 
+            // lblStatewideTransitFiles
+            // 
+            this.lblStatewideTransitFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblStatewideTransitFiles.AutoSize = true;
+            this.lblStatewideTransitFiles.Location = new System.Drawing.Point(13, 276);
+            this.lblStatewideTransitFiles.Name = "lblStatewideTransitFiles";
+            this.lblStatewideTransitFiles.Size = new System.Drawing.Size(233, 13);
+            this.lblStatewideTransitFiles.TabIndex = 16;
+            this.lblStatewideTransitFiles.Text = "Statewide Transit Files (from PayrollSummarizer):";
+            // 
+            // txtStatewideTransitQ1
+            // 
+            this.txtStatewideTransitQ1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtStatewideTransitQ1.Location = new System.Drawing.Point(12, 292);
+            this.txtStatewideTransitQ1.Name = "txtStatewideTransitQ1";
+            this.txtStatewideTransitQ1.Size = new System.Drawing.Size(655, 20);
+            this.txtStatewideTransitQ1.TabIndex = 15;
+            this.txtStatewideTransitQ1.Text = "Q1\\StatewideTransit.txt";
+            // 
+            // txtStatewideTransitQ2
+            // 
+            this.txtStatewideTransitQ2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtStatewideTransitQ2.Location = new System.Drawing.Point(12, 318);
+            this.txtStatewideTransitQ2.Name = "txtStatewideTransitQ2";
+            this.txtStatewideTransitQ2.Size = new System.Drawing.Size(655, 20);
+            this.txtStatewideTransitQ2.TabIndex = 17;
+            this.txtStatewideTransitQ2.Text = "Q2\\StatewideTransit.txt";
+            // 
+            // txtStatewideTransitQ3
+            // 
+            this.txtStatewideTransitQ3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtStatewideTransitQ3.Location = new System.Drawing.Point(12, 344);
+            this.txtStatewideTransitQ3.Name = "txtStatewideTransitQ3";
+            this.txtStatewideTransitQ3.Size = new System.Drawing.Size(655, 20);
+            this.txtStatewideTransitQ3.TabIndex = 18;
+            this.txtStatewideTransitQ3.Text = "Q3\\StatewideTransit.txt";
+            // 
+            // txtStatewideTransitQ4
+            // 
+            this.txtStatewideTransitQ4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtStatewideTransitQ4.Location = new System.Drawing.Point(12, 370);
+            this.txtStatewideTransitQ4.Name = "txtStatewideTransitQ4";
+            this.txtStatewideTransitQ4.Size = new System.Drawing.Size(655, 20);
+            this.txtStatewideTransitQ4.TabIndex = 19;
+            this.txtStatewideTransitQ4.Text = "Q4\\StatewideTransit.txt";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(549, 289);
+            this.ClientSize = new System.Drawing.Size(679, 481);
+            this.Controls.Add(this.txtStatewideTransitQ4);
+            this.Controls.Add(this.txtStatewideTransitQ3);
+            this.Controls.Add(this.txtStatewideTransitQ2);
+            this.Controls.Add(this.lblStatewideTransitFiles);
+            this.Controls.Add(this.txtStatewideTransitQ1);
+            this.Controls.Add(this.lblTaxFilingsFolder);
+            this.Controls.Add(this.btnChooseFolder);
             this.Controls.Add(this.lblEmployeeSupplemental);
             this.Controls.Add(this.txtEmployeeSupplemental);
             this.Controls.Add(this.txtResubID);
@@ -222,6 +311,14 @@
         private System.Windows.Forms.TextBox txtResubID;
         private System.Windows.Forms.Label lblEmployeeSupplemental;
         private System.Windows.Forms.TextBox txtEmployeeSupplemental;
+        private System.Windows.Forms.FolderBrowserDialog dlgTaxFilingsFolder;
+        private System.Windows.Forms.Button btnChooseFolder;
+        private System.Windows.Forms.Label lblTaxFilingsFolder;
+        private System.Windows.Forms.Label lblStatewideTransitFiles;
+        private System.Windows.Forms.TextBox txtStatewideTransitQ1;
+        private System.Windows.Forms.TextBox txtStatewideTransitQ2;
+        private System.Windows.Forms.TextBox txtStatewideTransitQ3;
+        private System.Windows.Forms.TextBox txtStatewideTransitQ4;
     }
 }
 

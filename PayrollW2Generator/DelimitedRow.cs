@@ -33,7 +33,7 @@ namespace PayrollExportConverter
 
         public string GetString(string columnName)
         {
-            return (string)this[GetIndex(columnName)];
+            return this[GetIndex(columnName)].ToString();
         }
 
         public decimal GetDecimal(string columnName)
